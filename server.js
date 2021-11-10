@@ -5,7 +5,7 @@ require('console.table');
 
 
 // Connect to database
-const db = mysql.createConnection(
+const connection = mysql.createConnection(
     {
       host: 'localhost',
       // Your MySQL username,
@@ -21,51 +21,20 @@ const db = mysql.createConnection(
 // app.get('/api/departments', (req, res) => {
 //     const sql = `SELECT * FROM department`;
   
-//     db.query(sql, (err, rows) => {
-//       if (err) {
-//         res.status(500).json({ error: err.message });
-//         return;
-//       }
-//       res.json({
-//         message: 'success',
-//         data: rows
-//       });
-//     });
-//   });
-  
-//   // Get all roles
+
+  // Get all roles
 // app.get('/api/roles', (req, res) => {
 //     const sql = `SELECT role.*, department.name AS department_name
 //      FROM role
 //      LEFT JOIN department ON role.department_id = department.id`;
   
-//     db.query(sql, (err, rows) => {
-//       if (err) {
-//         res.status(500).json({ error: err.message });
-//         return;
-//       }
-//       res.json({
-//         message: 'success',
-//         data: rows
-//       });
-//     });
-//   });
+
   
 //   // Get all employees
 // app.get('/api/employees', (req, res) => {
 //     const sql = `SELECT * FROM employee`;
   
-//     db.query(sql, (err, rows) => {
-//       if (err) {
-//         res.status(500).json({ error: err.message });
-//         return;
-//       }
-//       res.json({
-//         message: 'success',
-//         data: rows
-//       });
-//     });
-//   });
+
 
   const promptMenu = () => {
     return inquirer.prompt([
@@ -102,6 +71,47 @@ const db = mysql.createConnection(
                     process.exit();
             }
         });
+};
+
+const selectDepartments = () => {
+  connection.query(
+      'SELECT * FROM department;',
+      (err, results) => {
+          console.table(results); // results contains rows returned by server
+          promptMenu();
+      });
+};
+
+const selectRoles = () => {
+  connection.query(
+    `SELECT role.id, role.title, role.salary, department.name AS department_name
+     FROM role
+     LEFT JOIN department ON role.department_id = department.id;`,
+      (err, results) => {
+          console.table(results); // results contains rows returned by server
+          promptMenu();
+      }
+  )
+};
+
+const selectEmployees = () => {
+  connection.query(
+   `SELECT employee.id, 
+            employee.first_name, 
+            employee.last_name, 
+            role.title, 
+            department.name AS department,
+            role.salary, 
+            CONCAT (manager.first_name, " ", manager.last_name) AS manager
+    FROM employee
+    LEFT JOIN role ON employee.role_id = role.id
+    LEFT JOIN department ON role.department_id = department.id
+    LEFT JOIN employee manager ON employee.manager_id = manager.id;`,
+      (err, results) => {
+          console.table(results); // results contains rows returned by server
+          promptMenu();
+      }
+  )
 };
 
   
