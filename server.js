@@ -1,6 +1,6 @@
 const inquirer = require('inquirer')
-const mysql = require('mysql2');
-require('console.table');
+const mysql = require('mysql2')
+require('console.table')
 
 
 // Connect to database
@@ -14,7 +14,7 @@ const db = mysql.createConnection(
       database: 'employee_tracker'
     },
     console.log('Connected to the employee_tracker database.')
-  );
+  )
 
 
 
@@ -29,41 +29,41 @@ const db = mysql.createConnection(
         .then(userChoice => {
             switch (userChoice.menu) {
                 case 'view all departments':
-                    selectDepartments();
-                    break;
+                    selectDepartments()
+                    break
                 case 'view all roles':
-                    selectRoles();
-                    break;
+                    selectRoles()
+                    break
                 case 'view all employees':
-                    selectEmployees();
-                    break;
+                    selectEmployees()
+                    break
                 case 'add a department':
-                    promptAddDepartment();
-                    break;
+                    promptAddDepartment()
+                    break
                 case 'add a role':
-                    promptAddRole();
-                    break;
+                    promptAddRole()
+                    break
                 case 'add an employee':
-                    promptAddEmployee();
-                    break;
+                    promptAddEmployee()
+                    break
                 case 'update an employee role':
-                    promptUpdateRole();
-                    break;
+                    promptUpdateRole()
+                    break
                 default:
-                    process.exit();
+                    process.exit()
             }
-        });
-};
+        })
+}
 
 const selectDepartments = () => {
   const sql =  `SELECT department.id AS id, department.name AS department
                 FROM department`;
   
   db.query(sql, (err, results) => {
-          console.table(results); 
-          promptMenu();
-      });
-};
+          console.table(results)
+          promptMenu()
+      })
+}
 
 const selectRoles = () => {
   const sql =  `SELECT role.id, role.title, role.salary, department.name AS department
@@ -71,11 +71,11 @@ const selectRoles = () => {
                 LEFT JOIN department ON role.department_id = department.id`;
   
   db.query(sql, (err, results) => {
-          console.table(results); 
-          promptMenu();
+          console.table(results)
+          promptMenu()
       }
   )
-};
+}
 
 const selectEmployees = () => {
   const sql =  `SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT (manager.first_name, " ", manager.last_name) AS manager
@@ -85,11 +85,11 @@ const selectEmployees = () => {
                 LEFT JOIN employee manager ON employee.manager_id = manager.id`;
   
 db.query(sql, (err, results) => {
-          console.table(results); 
-          promptMenu();
+          console.table(results)
+          promptMenu()
       }
   )
-};
+}
 
 const promptAddDepartment = () => {
   inquirer.prompt([{
@@ -98,17 +98,17 @@ const promptAddDepartment = () => {
       message: 'Name the department you would like to add?',
       validate: departmentName => {
           if (departmentName) {
-              return true;
+              return true
           } else {
-              console.log('Please enter the name of your department!');
-              return false;
+              console.log('Please enter the name of your department!')
+              return false
           }
       }
   }
   ])
       .then(name => {
-          db.promise().query("INSERT INTO department SET ?", name);
-          selectDepartments();
+          db.promise().query("INSERT INTO department SET ?", name)
+          selectDepartments()
       })
 }
 
@@ -124,7 +124,7 @@ const promptAddRole = () => {
         }) => ({
             name: name,
             value: id
-        }));
+        }))
 
 
   inquirer.prompt([{
@@ -133,10 +133,10 @@ const promptAddRole = () => {
       message: 'Enter the name of your title (Required)',
       validate: titleName => {
           if (titleName) {
-              return true;
+              return true
           } else {
-              console.log('Please enter your title name!');
-              return false;
+              console.log('Please enter your title name!')
+              return false
           }
       }
           },
@@ -152,10 +152,10 @@ const promptAddRole = () => {
             message: 'Enter your salary (Required)',
             validate: salary => {
                 if (salary) {
-                    return true;
+                    return true
                 } else {
-                    console.log('Please enter your salary!');
-                    return false;
+                    console.log('Please enter your salary!')
+                    return false
                 }
             }
               }
@@ -170,7 +170,7 @@ const promptAddRole = () => {
                           salary: salary
                       },
                       function (err, res) {
-                          if (err) throw err;
+                          if (err) throw err
                       }
                   )
               }).then(() => selectRoles())
@@ -204,7 +204,7 @@ const promptAddEmployee = (roles) => {
               }) => ({
                   value: id,
                   name: manager
-              }));
+              }))
 
               inquirer.prompt(
                   [{
@@ -213,10 +213,10 @@ const promptAddEmployee = (roles) => {
                       message: 'What is the employees first name (Required)',
                       validate: firstName => {
                           if (firstName) {
-                              return true;
+                              return true
                           } else {
-                              console.log('Please enter the employees first name!');
-                              return false;
+                              console.log('Please enter the employees first name!')
+                              return false
                           }
                       }
                   },
@@ -226,10 +226,10 @@ const promptAddEmployee = (roles) => {
                       message: 'What is the employees last name (Required)',
                       validate: lastName => {
                           if (lastName) {
-                              return true;
+                              return true
                           } else {
-                              console.log('Please enter the employees last name!');
-                              return false;
+                              console.log('Please enter the employees last name!')
+                              return false
                           }
                       }
                   },
@@ -257,7 +257,7 @@ const promptAddEmployee = (roles) => {
                               manager_id: manager
                           },
                           function (err, res) {
-                              if (err) throw err;
+                              if (err) throw err
                               console.log({ role, manager })
                           }
                       )
@@ -280,7 +280,7 @@ const promptUpdateRole = () => {
           }) => ({
               value: id,
               name: title
-          }));
+          }))
 
           inquirer.prompt(
               [
@@ -293,7 +293,7 @@ const promptUpdateRole = () => {
               ]
           )
               .then(role => {
-                  console.log(role);
+                  console.log(role)
                   inquirer.prompt(
                       [{
                           type: 'input',
@@ -301,10 +301,10 @@ const promptUpdateRole = () => {
                           message: 'Enter the name of your title (Required)',
                           validate: titleName => {
                               if (titleName) {
-                                  return true;
+                                  return true
                               } else {
-                                  console.log('Please enter your title name!');
-                                  return false;
+                                  console.log('Please enter your title name!')
+                                  return false
                               }
                           }
                       },
@@ -314,10 +314,10 @@ const promptUpdateRole = () => {
                           message: 'Enter your salary (Required)',
                           validate: salary => {
                               if (salary) {
-                                  return true;
+                                  return true
                               } else {
-                                  console.log('Please enter your salary!');
-                                  return false;
+                                  console.log('Please enter your salary!')
+                                  return false
                               }
                           }
                       }]
@@ -332,16 +332,16 @@ const promptUpdateRole = () => {
                                   role.role
                               ],
                               function (err, res) {
-                                  if (err) throw err;
+                                  if (err) throw err
                               }
                           )
                       })
                       .then(() => promptMenu())
               })
-      });
+      })
 
-};
+}
 
   
 
-promptMenu();
+promptMenu()
