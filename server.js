@@ -60,7 +60,7 @@ const selectDepartments = () => {
                 FROM department`;
   
   db.query(sql, (err, results) => {
-          console.table(results); // results contain rows returned by server
+          console.table(results); 
           promptMenu();
       });
 };
@@ -71,7 +71,7 @@ const selectRoles = () => {
                 LEFT JOIN department ON role.department_id = department.id`;
   
   db.query(sql, (err, results) => {
-          console.table(results); // results contain rows returned by server
+          console.table(results); 
           promptMenu();
       }
   )
@@ -85,7 +85,7 @@ const selectEmployees = () => {
                 LEFT JOIN employee manager ON employee.manager_id = manager.id`;
   
 db.query(sql, (err, results) => {
-          console.table(results); // results contain rows returned by server
+          console.table(results); 
           promptMenu();
       }
   )
